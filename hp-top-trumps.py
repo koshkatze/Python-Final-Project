@@ -1,5 +1,6 @@
 import random
 import requests
+import pyfiglet
 
 
 def red(text):
@@ -158,16 +159,57 @@ spell_mapping = {
 player_score = 0
 computer_score = 0
 
+# Define the file name for storing high scores
+high_scores_file = "high_scores.txt"
+
+
+# Function to load existing high scores from a file (if any)
+def load_high_scores():
+    try:
+        with open(high_scores_file, "r") as file:
+            high_scores = {}
+            for line in file:
+                name, score = line.strip().split(":")
+                high_scores[name] = int(score)
+            return high_scores
+    except FileNotFoundError:
+        return {}
+
+
+# Function to update the high scores with the current player's score
+def update_high_scores(player_name, player_score, high_scores):
+    if player_name not in high_scores or player_score > high_scores[player_name]:
+        high_scores[player_name] = player_score
+
+
+# Function to save the updated high scores to the file
+def save_high_scores(high_scores):
+    with open(high_scores_file, "w") as file:
+        for name, score in high_scores.items():
+            file.write(f"{name}: {score}\n")
+
+
+# Function to display the high scores
+def display_high_scores(high_scores):
+    print("\nHigh Scores:")
+    for name, score in high_scores.items():
+        print(f"{name}: {score}")
+    print(line_break)
+
+
 # Create a line break
 line_break = "_______________________________________________________________________________________________________________________________________________\n"
 
 # Create the welcome message
-welcome_message = f"________________________________________________ {yellow('Welcome to the Harry Potter Top Trumps game!')} _________________________________________________\n\n"
-welcome_message += "__________________________ In this game, you will be facing off against the computer in a battle of wits and magic. ___________________________\n"
-welcome_message += "_____________ You will each take turns selecting a character from the Harry Potter universe and compare their magical abilities. ______________\n\n"
-welcome_message += f"______________________________________ The player with the most {magenta('power')} for each category wins the round. _______________________________________\n\n"
-welcome_message += "_________ The game continues until all categories have been compared, and the player with the most rounds won is the ultimate winner! _________\n"
-welcome_message += "_______________________ Get ready to delve into the magical world of Harry Potter and may the best witch or wizard win! _______________________\n"
+welcome_message = "+-+-+-+-+-+-+ +-+-+-+-+-+\n"
+welcome_message += magenta("|P|o|t|t|e|r| |P|o|w|e|r|\n")
+welcome_message += "+-+-+-+-+-+-+ +-+-+-+-+-+\n\n"
+welcome_message += f"{yellow('Welcome to the Harry Potter Top Trumps game!')}\n\n"
+welcome_message += "In this game, you will be facing off against the computer in a battle of wits and magic.\n"
+welcome_message += "You will each take turns selecting a character from the Harry Potter universe and compare their magical abilities.\n\n"
+welcome_message += f"The player with the most {magenta('power')} for each category wins the round.\n\n"
+welcome_message += "The game continues until all categories have been compared, and the player with the most rounds won is the ultimate winner!\n"
+welcome_message += "Get ready to delve into the magical world of Harry Potter and may the best witch or wizard win!\n"
 
 # Print the line break
 print(line_break)
@@ -178,8 +220,19 @@ print(welcome_message)
 # Print the line break
 print(line_break)
 
-# Prompt the user to press any key to begin
-input(f"Press {cyan('any key')} to begin: ")
+# Ask for player name
+player_name = input(yellow("\nPlease enter your name: "))
+
+# Ask for the number of rounds
+while True:
+    try:
+        num_rounds = int(input("\nEnter the number of rounds you want to play: "))
+        if num_rounds > 0:
+            break
+        else:
+            print("Number of rounds should be greater than 0.")
+    except ValueError:
+        print("Invalid input. Please enter a valid number.")
 
 
 def print_category_message():
@@ -191,7 +244,7 @@ def print_category_message():
 
 
 # Create a loop for 5 rounds
-for round_num in range(1, 6):
+for round_num in range(1, num_rounds + 1):
 
     # Generate the random character and spell for the player
     player_character = random.choice(filtered_characters)
@@ -343,7 +396,7 @@ for round_num in range(1, 6):
 
     # Determine the winner of the round
     if player_chosen_value > computer_chosen_value:
-        winner = "You have won this round!"
+        winner = f"{player_name} wins this round!"
         player_score += 1
     elif player_chosen_value < computer_chosen_value:
         winner = "The computer wins this round"
@@ -356,12 +409,12 @@ for round_num in range(1, 6):
 
     # Print the result of the round
     print(
-        f"{magenta('Player')} {chosen_category}: {player_chosen_category_str.capitalize()} (Power: {player_chosen_value})")
+        f"{magenta(f'{player_name}')} {chosen_category}: {player_chosen_category_str.capitalize()} (Power: {player_chosen_value})")
     print(
         f"{blue('Computer')} {chosen_category}: {computer_chosen_category_str.capitalize()} (Power: {computer_chosen_value})")
     print(f"{yellow('Result:')} {winner}\n")
     print(f"{yellow('Current scores:')}")
-    print(f"{magenta('Player:')} {player_score} | {blue('Computer:')} {computer_score}\n")
+    print(f"{magenta(f'{player_name}:')} {player_score} | {blue('Computer:')} {computer_score}\n")
 
     # Print the line break
     print(line_break)
@@ -382,18 +435,35 @@ for round_num in range(1, 6):
             print(red("\nInvalid choice"))
             continue
 
-# Print the line break
-print(line_break)
+    # Print the line break
+    print(line_break)
 
-# Determine the overall winner     # f"{red('TEXT')}
-if player_score > computer_score:
-    overall_winner = f"{yellow('Congratulations! You are the overall winner!')}"
-elif player_score < computer_score:
-    overall_winner = f"{red('The computer is the overall winner. Better luck next time!')}"
-else:
-    overall_winner = f"{green('It is a tie! There is no overall winner.')}"
+    # Determine the overall winner     # f"{red('TEXT')}
+    if player_score > computer_score:
+        overall_winner = yellow(f"Congratulations, {player_name}! You are the overall winner!")
+    elif player_score < computer_score:
+        overall_winner = red("The computer is the overall winner. Better luck next time!")
+    else:
+        overall_winner = f"{green('It is a tie! There is no overall winner.')}"
 
-# Print the overall winner
-print(f"{yellow('Finishing scores:')}")
-print(f"{magenta('Player:')} {player_score} | {blue('Computer:')} {computer_score}\n")
-print(overall_winner)
+    # Print the overall winner
+    print(f"{yellow('Finishing scores:')}")
+    print(f"{magenta(f'{player_name}:')} {player_score} | {blue('Computer:')} {computer_score}\n")
+    print(overall_winner)
+    print(line_break)
+
+    # Update high scores and save them to the file
+    high_scores = load_high_scores()
+    update_high_scores(player_name, player_score, high_scores)
+    save_high_scores(high_scores)
+
+    # Ask if the user wants to view the high scores
+    while True:
+        view_high_scores = input("Do you want to view the high scores? (yes/no): ").lower()
+        if view_high_scores == "yes":
+            display_high_scores(high_scores)
+            break
+        elif view_high_scores == "no":
+            break
+        else:
+            print("Invalid input. Please enter 'yes' or 'no'.")
