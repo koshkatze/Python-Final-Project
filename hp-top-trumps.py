@@ -438,32 +438,32 @@ for round_num in range(1, num_rounds + 1):
     # Print the line break
     print(line_break)
 
-    # Determine the overall winner     # f"{red('TEXT')}
-    if player_score > computer_score:
-        overall_winner = yellow(f"Congratulations, {player_name}! You are the overall winner!")
-    elif player_score < computer_score:
-        overall_winner = red("The computer is the overall winner. Better luck next time!")
+# Determine the overall winner     # f"{red('TEXT')}
+if player_score > computer_score:
+    overall_winner = yellow(f"Congratulations, {player_name}! You are the overall winner!")
+elif player_score < computer_score:
+    overall_winner = red("The computer is the overall winner. Better luck next time!")
+else:
+    overall_winner = f"{green('It is a tie! There is no overall winner.')}"
+
+# Print the overall winner
+print(f"{yellow('Finishing scores:')}")
+print(f"{magenta(f'{player_name}:')} {player_score} | {blue('Computer:')} {computer_score}\n")
+print(overall_winner)
+print(line_break)
+
+# Update high scores and save them to the file
+high_scores = load_high_scores()
+update_high_scores(player_name, player_score, high_scores)
+save_high_scores(high_scores)
+
+# Ask if the user wants to view the high scores
+while True:
+    view_high_scores = input("Do you want to view the high scores? (yes/no): ").lower()
+    if view_high_scores == "yes":
+        display_high_scores(high_scores)
+        break
+    elif view_high_scores == "no":
+        break
     else:
-        overall_winner = f"{green('It is a tie! There is no overall winner.')}"
-
-    # Print the overall winner
-    print(f"{yellow('Finishing scores:')}")
-    print(f"{magenta(f'{player_name}:')} {player_score} | {blue('Computer:')} {computer_score}\n")
-    print(overall_winner)
-    print(line_break)
-
-    # Update high scores and save them to the file
-    high_scores = load_high_scores()
-    update_high_scores(player_name, player_score, high_scores)
-    save_high_scores(high_scores)
-
-    # Ask if the user wants to view the high scores
-    while True:
-        view_high_scores = input("Do you want to view the high scores? (yes/no): ").lower()
-        if view_high_scores == "yes":
-            display_high_scores(high_scores)
-            break
-        elif view_high_scores == "no":
-            break
-        else:
-            print("Invalid input. Please enter 'yes' or 'no'.")
+        print("Invalid input. Please enter 'yes' or 'no'.")

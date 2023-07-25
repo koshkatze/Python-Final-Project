@@ -1,5 +1,0 @@
-Kat: 1
-Jim: 1
-Tim: 0
-Ben: 0
-Mim: 1
